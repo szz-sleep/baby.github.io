@@ -6,7 +6,6 @@
     <title>今日3D推荐 · 鸿奇添彩友俱乐部</title>
     <!-- 关键配置：告诉浏览器去哪里找应用清单 -->
     <link rel="manifest" href="./manifest.json" />
-    
     <style>
         /* ── 全局重置 ── */
         * {
@@ -60,8 +59,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 44px;
-            height: 44px;
+            width: clamp(36px, 8vw, 44px);
+            height: clamp(36px, 8vw, 44px);
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.70);
             backdrop-filter: blur(4px);
@@ -71,7 +70,7 @@
             flex-shrink: 0;
             position: relative;
             z-index: 20;
-            font-size: 24px;
+            font-size: clamp(18px, 4vw, 24px);
             color: #6b5a3e;
             user-select: none;
         }
@@ -87,7 +86,7 @@
         /* ── 下拉菜单 ── */
         .dropdown-menu {
             position: absolute;
-            top: 54px;
+            top: clamp(48px, 10vw, 54px);
             left: 0;
             background: rgba(255, 255, 255, 0.96);
             backdrop-filter: blur(12px);
@@ -172,7 +171,6 @@
 
         .main-title {
             font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
-            font-size: 36px;
             font-weight: 700;
             letter-spacing: 6px;
             background: linear-gradient(145deg, #b81a1a 0%, #d43232 30%, #e8b830 65%, #c4910f 100%);
@@ -185,6 +183,7 @@
             display: inline-block;
             position: relative;
             pointer-events: auto;
+            font-size: clamp(20px, 6vw, 36px);
         }
 
         .main-title::after {
@@ -200,11 +199,11 @@
             -webkit-text-fill-color: transparent;
         }
 
-        /* ── LOGO 区域 (直接显示 launchericon-512x512.png) ── */
+        /* ── LOGO 区域 (使用 launchericon-512x512.png，自适应) ── */
         .logo-area {
             flex-shrink: 0;
-            width: 70px;
-            height: 70px;
+            width: clamp(44px, 12vw, 70px);
+            height: clamp(44px, 12vw, 70px);
             border-radius: 0;
             display: flex;
             align-items: center;
@@ -233,7 +232,37 @@
 
         .logo-area .logo-placeholder {
             display: none;
-            /* 默认隐藏，仅当图片加载失败时显示 */;
+            /* 默认隐藏，仅当图片加载失败时显示 */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'PingFang SC', 'Microsoft YaHei', serif;
+            font-weight: 700;
+            color: #a67c2e;
+            font-size: clamp(12px, 3vw, 16px);
+            line-height: 1.3;
+            text-align: center;
+            padding: 4px;
+            background: rgba(212, 160, 23, 0.04);
+            border: 2px dashed #d4a017;
+            border-radius: 6px;
+            width: 100%;
+            height: 100%;
+        }
+
+        .logo-area .logo-placeholder .logo-char {
+            font-size: clamp(16px, 4.5vw, 24px);
+            color: #c41a1a;
+            letter-spacing: 3px;
+        }
+
+        .logo-area .logo-placeholder .logo-sub {
+            font-size: clamp(7px, 2vw, 10px);
+            color: #d4a017;
+            letter-spacing: 2px;
+            border-top: 1px solid #d4a017;
+            padding-top: 2px;
+            margin-top: 2px;
         }
 
         .logo-area input[type="file"] {
@@ -254,7 +283,7 @@
         }
 
         .date-display {
-            font-size: 17px;
+            font-size: clamp(14px, 3.2vw, 17px);
             color: #6b5a3e;
             font-weight: 500;
             letter-spacing: 1px;
@@ -275,7 +304,7 @@
         }
 
         .date-display .date-icon {
-            font-size: 22px;
+            font-size: clamp(18px, 4vw, 22px);
             line-height: 1;
             display: inline-block;
             flex-shrink: 0;
@@ -292,7 +321,7 @@
             padding: 0 2px;
             border-bottom: 2px solid transparent;
             transition: border-color 0.2s;
-            font-size: 17px;
+            font-size: clamp(14px, 3.2vw, 17px);
             line-height: 1.4;
             display: inline-block;
         }
@@ -386,7 +415,7 @@
         }
 
         .footer .line-1 {
-            font-size: 14px;
+            font-size: clamp(12px, 2.6vw, 14px);
             color: #7a6a4a;
             font-weight: 400;
             letter-spacing: 1px;
@@ -400,7 +429,7 @@
         }
 
         .footer .line-2 {
-            font-size: 17px;
+            font-size: clamp(14px, 3.2vw, 17px);
             font-weight: 700;
             color: #c41a1a;
             letter-spacing: 2px;
@@ -420,52 +449,10 @@
             .header {
                 min-height: 54px;
             }
-            .main-title {
-                font-size: 26px;
-                letter-spacing: 4px;
-            }
-            .logo-area {
-                width: 54px;
-                height: 54px;
-            }
-            .menu-toggle {
-                width: 38px;
-                height: 38px;
-                font-size: 20px;
-            }
-            .dropdown-menu {
-                min-width: 130px;
-                top: 48px;
-            }
-            .dropdown-menu .menu-item {
-                padding: 10px 16px;
-                font-size: 14px;
-            }
-            .dropdown-menu .menu-item .icon {
-                font-size: 18px;
-                width: 24px;
-            }
-            .date-display {
-                font-size: 14px;
-                padding: 2px 10px 2px 8px;
-                gap: 4px;
-            }
-            .date-display .date-icon {
-                font-size: 18px;
-            }
-            .date-display .date-text {
-                font-size: 14px;
-            }
             .editor {
                 padding: 14px 16px;
                 font-size: 15px;
                 border-radius: 14px;
-            }
-            .footer .line-1 {
-                font-size: 12px;
-            }
-            .footer .line-2 {
-                font-size: 14px;
             }
         }
 
@@ -474,52 +461,10 @@
                 padding: 12px 10px 10px;
                 border-radius: 14px;
             }
-            .main-title {
-                font-size: 20px;
-                letter-spacing: 2px;
-            }
-            .logo-area {
-                width: 40px;
-                height: 40px;
-            }
-            .menu-toggle {
-                width: 32px;
-                height: 32px;
-                font-size: 18px;
-            }
-            .dropdown-menu {
-                min-width: 110px;
-                top: 40px;
-            }
-            .dropdown-menu .menu-item {
-                padding: 8px 12px;
-                font-size: 12px;
-            }
-            .dropdown-menu .menu-item .icon {
-                font-size: 16px;
-                width: 20px;
-            }
-            .date-display {
-                font-size: 12px;
-                padding: 2px 6px 2px 4px;
-                gap: 2px;
-            }
-            .date-display .date-icon {
-                font-size: 14px;
-            }
-            .date-display .date-text {
-                font-size: 12px;
-            }
             .editor {
                 padding: 10px 12px;
                 font-size: 13px;
                 border-radius: 12px;
-            }
-            .footer .line-1 {
-                font-size: 10px;
-            }
-            .footer .line-2 {
-                font-size: 12px;
             }
         }
 
@@ -567,6 +512,10 @@
             }
             .logo-area:hover {
                 transform: none !important;
+            }
+            .logo-area .logo-placeholder {
+                border-color: #ccc !important;
+                background: #faf8f4 !important;
             }
             .footer .line-1,
             .footer .line-2 {
@@ -622,6 +571,63 @@
         .toast.show {
             opacity: 1;
         }
+
+        /* ── 色板居中弹窗样式 ── */
+        #colorPickerOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        #colorPickerOverlay.active {
+            display: flex;
+        }
+
+        #colorPickerOverlay input[type="color"] {
+            width: 80px;
+            height: 80px;
+            border: 6px solid #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            padding: 0;
+            background: none;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25);
+            transition: transform 0.2s;
+        }
+
+        #colorPickerOverlay input[type="color"]:hover {
+            transform: scale(1.05);
+        }
+        #colorPickerOverlay input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        #colorPickerOverlay input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 50%;
+        }
+
+        /* 点击遮罩关闭 */
+        #colorPickerOverlay .close-area {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        #colorPickerOverlay .picker-container {
+            position: relative;
+            z-index: 1;
+        }
     </style>
 </head>
 
@@ -656,8 +662,7 @@
                 </button>
             </div>
 
-            <!-- 隐藏的 input -->
-            <input type="color" id="bgColorPicker" class="hidden-input" value="#ffffff" />
+            <!-- 隐藏的 input (底图) -->
             <input type="file" id="bgImageInput" class="hidden-input" accept="image/*" />
 
             <!-- 居中标题 -->
@@ -665,12 +670,12 @@
                 <h1 class="main-title">今日3D推荐</h1>
             </div>
 
-            <!-- 右上角 LOGO (直接加载 launchericon-512x512.png) -->
-            <!-- ⭐ 封装提示: 将 launchericon-512x512.png 放在应用根目录或 assets 文件夹,
-                 并将下方的 src 修改为对应的路径, 例如: src="assets/launchericon-512x512.png" -->
+            <!-- 右上角 LOGO (使用 launchericon-512x512.png，自适应) -->
+            <!-- ⭐ 封装提示: 请将 launchericon-512x512.png 放在应用根目录或 assets 文件夹，
+                 并确保下方 src 路径正确。例如: src="assets/launchericon-512x512.png" -->
             <div class="logo-area" id="logoArea" title="LOGO (点击可更换)">
                 <img id="logoImg" src="launchericon-512x512.png" alt="鸿奇添LOGO" style="display:block;width:100%;height:100%;object-fit:contain;" />
-                <!-- 占位元素隐藏，图片加载失败时可通过JS显示 -->
+                <!-- 占位元素（图片加载失败时显示） -->
                 <div class="logo-placeholder" id="logoPlaceholder" style="display:none;">
                     <span class="logo-char">鸿奇添</span>
                     <span class="logo-sub">✦ 俱乐部 ✦</span>
@@ -702,6 +707,14 @@
 
     </div>
 
+    <!-- ===== 色板居中弹窗 ===== -->
+    <div id="colorPickerOverlay">
+        <div class="close-area" id="colorPickerClose"></div>
+        <div class="picker-container">
+            <input type="color" id="colorPickerPopup" value="#ffffff" />
+        </div>
+    </div>
+
     <!-- Toast 提示 -->
     <div class="toast" id="toast"></div>
 
@@ -715,7 +728,6 @@
             const dateText = document.getElementById('dateText');
             const menuToggle = document.getElementById('menuToggle');
             const dropdownMenu = document.getElementById('dropdownMenu');
-            const bgColorPicker = document.getElementById('bgColorPicker');
             const bgImageInput = document.getElementById('bgImageInput');
             const logoArea = document.getElementById('logoArea');
             const logoImg = document.getElementById('logoImg');
@@ -723,12 +735,17 @@
             const logoUpload = document.getElementById('logoUpload');
             const toast = document.getElementById('toast');
 
+            // 色板弹窗
+            const colorPickerOverlay = document.getElementById('colorPickerOverlay');
+            const colorPickerPopup = document.getElementById('colorPickerPopup');
+            const colorPickerClose = document.getElementById('colorPickerClose');
+
             // ─── 存储 ───
-            const STORAGE_CONTENT = 'hq3d_editor_content_v11';
-            const STORAGE_BG = 'hq3d_card_bg_v11';
-            const STORAGE_LOGO = 'hq3d_logo_data_v11';
-            const STORAGE_BGIMAGE = 'hq3d_bgimage_data_v11';
-            const STORAGE_DATE = 'hq3d_date_text_v11';
+            const STORAGE_CONTENT = 'hq3d_editor_content_v13';
+            const STORAGE_BG = 'hq3d_card_bg_v13';
+            const STORAGE_LOGO = 'hq3d_logo_data_v13';
+            const STORAGE_BGIMAGE = 'hq3d_bgimage_data_v13';
+            const STORAGE_DATE = 'hq3d_date_text_v13';
 
             // ─── 默认 ───
             const DEFAULT_CONTENT = `
@@ -826,39 +843,58 @@
             // ─── 3. 字号固定 ───
             editor.style.fontSize = DEFAULT_FONT_SIZE + 'px';
 
-            // ─── 4. 底色 ───
+            // ─── 4. 底色 (色板弹窗居中) ───
             function loadBgColor() {
                 const saved = localStorage.getItem(STORAGE_BG);
                 if (saved) {
                     card.style.backgroundColor = saved;
-                    bgColorPicker.value = saved;
+                    colorPickerPopup.value = saved;
                 } else {
                     card.style.backgroundColor = DEFAULT_BG;
-                    bgColorPicker.value = DEFAULT_BG;
+                    colorPickerPopup.value = DEFAULT_BG;
                 }
             }
             loadBgColor();
 
-            bgColorPicker.addEventListener('input', function() {
+            function openColorPicker() {
+                colorPickerPopup.value = card.style.backgroundColor || DEFAULT_BG;
+                colorPickerOverlay.classList.add('active');
+            }
+
+            function closeColorPicker() {
+                colorPickerOverlay.classList.remove('active');
+            }
+
+            colorPickerClose.addEventListener('click', closeColorPicker);
+
+            colorPickerPopup.addEventListener('input', function() {
                 const color = this.value;
                 card.style.backgroundColor = color;
                 localStorage.setItem(STORAGE_BG, color);
             });
 
+            colorPickerOverlay.addEventListener('click', function(e) {
+                if (e.target === colorPickerOverlay || e.target === colorPickerClose) {
+                    closeColorPicker();
+                }
+            });
+
+            colorPickerPopup.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+
             // ─── 5. LOGO ───
-            // 加载外部图片，如果失败则显示占位符
+            // 图片加载失败时显示占位
             logoImg.addEventListener('error', function() {
                 this.style.display = 'none';
                 logoPlaceholder.style.display = 'flex';
             });
 
-            // 成功加载时隐藏占位符
             logoImg.addEventListener('load', function() {
                 this.style.display = 'block';
                 logoPlaceholder.style.display = 'none';
             });
 
-            // 点击LOGO区域触发上传 (便于封装后更换)
             logoArea.addEventListener('click', function(e) {
                 if (e.target.tagName === 'INPUT') return;
                 logoUpload.click();
@@ -941,7 +977,7 @@
                         handleScreenshot();
                         break;
                     case 'bgcolor':
-                        bgColorPicker.click();
+                        openColorPicker();
                         break;
                     case 'bgimage':
                         bgImageInput.click();
@@ -976,6 +1012,9 @@
             async function handleScreenshot() {
                 try {
                     closeMenu();
+                    if (colorPickerOverlay.classList.contains('active')) {
+                        closeColorPicker();
+                    }
                     await new Promise(r => setTimeout(r, 100));
 
                     if (typeof html2canvas === 'undefined') {
@@ -994,7 +1033,6 @@
                         width: card.scrollWidth,
                         height: card.scrollHeight,
                         onclone: function(clonedDoc, clonedElement) {
-                            // 标题：去除渐变，设置纯色
                             const title = clonedElement.querySelector('.main-title');
                             if (title) {
                                 title.style.background = 'none';
@@ -1007,7 +1045,6 @@
                                 if (after) after.style.display = 'none';
                             }
 
-                            // 底部文字：去除渐变
                             const lines = clonedElement.querySelectorAll('.footer .line-1, .footer .line-2');
                             lines.forEach(el => {
                                 el.style.background = 'none';
@@ -1023,7 +1060,6 @@
                                 line2.style.webkitTextFillColor = '#c41a1a';
                             }
 
-                            // 日期文字
                             const dateEl = clonedElement.querySelector('.date-text');
                             if (dateEl) {
                                 dateEl.style.background = 'none';
@@ -1085,7 +1121,7 @@
             // ─── 9. 默认恢复 ───
             function handleReset() {
                 card.style.backgroundColor = DEFAULT_BG;
-                bgColorPicker.value = DEFAULT_BG;
+                colorPickerPopup.value = DEFAULT_BG;
                 localStorage.setItem(STORAGE_BG, DEFAULT_BG);
 
                 clearBgImage();
@@ -1125,10 +1161,10 @@
                 loadHtml2Canvas().catch(() => {});
             }
 
-            console.log('✅ 鸿奇添·3D推荐记事本 (LOGO已替换为 launchericon-512x512.png)');
-            console.log('⭐ 封装提示: 请将 launchericon-512x512.png 放在应用根目录或 assets 文件夹, 并调整 <img src="..."> 路径。');
+            console.log('✅ 鸿奇添·3D推荐记事本 (LOGO已替换为 launchericon-512x512.png，自适应)');
+            console.log('⭐ 封装提示: 请将 launchericon-512x512.png 放在应用根目录或 assets 文件夹，并调整 <img src="..."> 路径。');
         })();
     </script>
 
 </body>
-</html>
+</html>        
