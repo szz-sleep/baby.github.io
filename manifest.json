@@ -1,0 +1,17 @@
+{
+  "name": "鸿奇添3D助手",
+  "short_name": "鸿奇添",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "description": "专业的3D号码推荐与记录工具。",
+  "icons": [
+    {
+      "src": "/launchericon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
