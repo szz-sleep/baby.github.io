@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>今日3D推荐 · 鸿奇添彩友俱乐部</title>
+    <style>
+        /* ── 全局重置 ── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #ece6da;
+            font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+            padding: 16px 14px;
+            transition: background-color 0.2s;
+        }
+
+        /* ── 9:16 竖版卡片 ── */
+        .card {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            aspect-ratio: 9 / 16;
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.08), 0 8px 20px rgba(0, 0, 0, 0.04);
+            padding: 28px 30px 24px;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s;
+            overflow: hidden;
+        }
+
+        /* ── 顶部栏 ── */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            min-height: 64px;
+            margin-bottom: 4px;
+            position: relative;
+            z-index: 10;
+            padding: 0 0;
+        }
+
+        /* ── 汉堡菜单按钮 ── */
+        .menu-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.70);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(212, 160, 23, 0.10);
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 20;
+            font-size: 24px;
+            color: #6b5a3e;
+            user-select: none;
+        }
+
+        .menu-toggle:hover {
+            background: rgba(212, 160, 23, 0.12);
+        }
+
+        .menu-toggle:active {
+            transform: scale(0.92);
+        }
+
+        /* ── 下拉菜单 ── */
+        .dropdown-menu {
+            position: absolute;
+            top: 54px;
+            left: 0;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 6px 0;
+            min-width: 150px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.10), 0 4px 12px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(212, 160, 23, 0.08);
+            display: none;
+            z-index: 30;
+            opacity: 0;
+            transform: translateY(-8px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            pointer-events: none;
+        }
+
+        .dropdown-menu.open {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .dropdown-menu .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #4a3a2a;
+            cursor: pointer;
+            transition: background 0.15s;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        .dropdown-menu .menu-item:hover {
+            background: rgba(212, 160, 23, 0.08);
+        }
+
+        .dropdown-menu .menu-item:active {
+            background: rgba(212, 160, 23, 0.15);
+        }
+
+        .dropdown-menu .menu-item .icon {
+            font-size: 20px;
+            width: 28px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .dropdown-menu .menu-item .badge {
+            font-size: 11px;
+            background: rgba(212, 160, 23, 0.12);
+            padding: 0 8px;
+            border-radius: 12px;
+            color: #a67c2e;
+            margin-left: auto;
+        }
+
+        /* ── 隐藏的 input ── */
+        .hidden-input {
+            display: none;
+        }
+
+        /* ── 居中标题 ── */
+        .title-wrapper {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .main-title {
+            font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: 6px;
+            background: linear-gradient(145deg, #b81a1a 0%, #d43232 30%, #e8b830 65%, #c4910f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 3px 8px rgba(180, 60, 0, 0.16));
+            text-shadow: 0 1px 4px rgba(212, 160, 23, 0.10);
+            line-height: 1.2;
+            display: inline-block;
+            position: relative;
+            pointer-events: auto;
+        }
+
+        .main-title::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 10%;
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #d4a017, #c41a1a, #d4a017, transparent);
+            border-radius: 4px;
+            opacity: 0.35;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ── LOGO 区域 (直接显示 launchericon-512x512.png) ── */
+        .logo-area {
+            flex-shrink: 0;
+            width: 70px;
+            height: 70px;
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s;
+            background: transparent;
+            border: none;
+            margin-left: 4px;
+            position: relative;
+            z-index: 15;
+        }
+
+        .logo-area:hover {
+            transform: scale(1.03);
+        }
+
+        .logo-area img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            border-radius: 4px;
+        }
+
+        .logo-area .logo-placeholder {
+            display: none;
+            /* 默认隐藏，仅当图片加载失败时显示 */;
+        }
+
+        .logo-area input[type="file"] {
+            display: none;
+        }
+
+        /* ── 日期区域 (可直接编辑) ── */
+        .sub-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid rgba(212, 160, 23, 0.08);
+            position: relative;
+            z-index: 5;
+        }
+
+        .date-display {
+            font-size: 17px;
+            color: #6b5a3e;
+            font-weight: 500;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 14px 4px 10px;
+            border-radius: 30px;
+            transition: background 0.2s;
+            cursor: text;
+            user-select: text;
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        .date-display:hover {
+            background: rgba(212, 160, 23, 0.06);
+        }
+
+        .date-display .date-icon {
+            font-size: 22px;
+            line-height: 1;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        .date-display .date-text {
+            background: linear-gradient(135deg, #c41a1a, #d4a017);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            outline: none;
+            min-width: 30px;
+            padding: 0 2px;
+            border-bottom: 2px solid transparent;
+            transition: border-color 0.2s;
+            font-size: 17px;
+            line-height: 1.4;
+            display: inline-block;
+        }
+
+        .date-display .date-text:focus {
+            border-bottom-color: #d4a017;
+            background: linear-gradient(135deg, #c41a1a, #d4a017);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .date-display .date-text:empty::before {
+            content: '点击编辑日期';
+            color: #b8a88a;
+            -webkit-text-fill-color: #b8a88a;
+            font-weight: 400;
+        }
+
+        /* ── 正文编辑区域 (字号固定18px) ── */
+        .editor-wrapper {
+            flex: 1;
+            min-height: 0;
+            margin: 2px 0 8px;
+            position: relative;
+        }
+
+        .editor {
+            width: 100%;
+            height: 100%;
+            border: 3px solid rgba(212, 160, 23, 0.18);
+            border-radius: 20px;
+            padding: 20px 24px;
+            font-size: 18px;
+            line-height: 1.8;
+            color: #2c241a;
+            font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+            outline: none;
+            overflow-y: auto;
+            background: #ffffff;
+            transition: border-color 0.3s;
+            resize: none;
+            box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.02);
+            position: relative;
+            z-index: 2;
+            word-break: break-word;
+        }
+
+        .editor:focus {
+            border-color: #d4a017;
+            box-shadow: inset 0 2px 12px rgba(212, 160, 23, 0.06), 0 0 0 4px rgba(212, 160, 23, 0.06);
+        }
+
+        .editor:empty::before {
+            content: '✎ 在这里输入您的3D号码推荐…';
+            color: #b8a88a;
+            font-weight: 400;
+            pointer-events: none;
+        }
+
+        /* 底图层 (伪元素, 15%透明度) */
+        .editor::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: var(--bg-image, none);
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            pointer-events: none;
+            border-radius: 18px;
+            z-index: 0;
+            transition: opacity 0.3s;
+        }
+
+        .editor>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── 底部声明 ── */
+        .footer {
+            flex-shrink: 0;
+            text-align: center;
+            padding-top: 10px;
+            border-top: 1px solid rgba(212, 160, 23, 0.08);
+            margin-top: 2px;
+        }
+
+        .footer .line-1 {
+            font-size: 14px;
+            color: #7a6a4a;
+            font-weight: 400;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #b84a2a, #a67c2e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0.80;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .footer .line-2 {
+            font-size: 17px;
+            font-weight: 700;
+            color: #c41a1a;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #c41a1a, #d4a017);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+        }
+
+        /* ── 响应式 ── */
+        @media (max-width: 600px) {
+            .card {
+                padding: 18px 16px 16px;
+                border-radius: 18px;
+            }
+            .header {
+                min-height: 54px;
+            }
+            .main-title {
+                font-size: 26px;
+                letter-spacing: 4px;
+            }
+            .logo-area {
+                width: 54px;
+                height: 54px;
+            }
+            .menu-toggle {
+                width: 38px;
+                height: 38px;
+                font-size: 20px;
+            }
+            .dropdown-menu {
+                min-width: 130px;
+                top: 48px;
+            }
+            .dropdown-menu .menu-item {
+                padding: 10px 16px;
+                font-size: 14px;
+            }
+            .dropdown-menu .menu-item .icon {
+                font-size: 18px;
+                width: 24px;
+            }
+            .date-display {
+                font-size: 14px;
+                padding: 2px 10px 2px 8px;
+                gap: 4px;
+            }
+            .date-display .date-icon {
+                font-size: 18px;
+            }
+            .date-display .date-text {
+                font-size: 14px;
+            }
+            .editor {
+                padding: 14px 16px;
+                font-size: 15px;
+                border-radius: 14px;
+            }
+            .footer .line-1 {
+                font-size: 12px;
+            }
+            .footer .line-2 {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .card {
+                padding: 12px 10px 10px;
+                border-radius: 14px;
+            }
+            .main-title {
+                font-size: 20px;
+                letter-spacing: 2px;
+            }
+            .logo-area {
+                width: 40px;
+                height: 40px;
+            }
+            .menu-toggle {
+                width: 32px;
+                height: 32px;
+                font-size: 18px;
+            }
+            .dropdown-menu {
+                min-width: 110px;
+                top: 40px;
+            }
+            .dropdown-menu .menu-item {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+            .dropdown-menu .menu-item .icon {
+                font-size: 16px;
+                width: 20px;
+            }
+            .date-display {
+                font-size: 12px;
+                padding: 2px 6px 2px 4px;
+                gap: 2px;
+            }
+            .date-display .date-icon {
+                font-size: 14px;
+            }
+            .date-display .date-text {
+                font-size: 12px;
+            }
+            .editor {
+                padding: 10px 12px;
+                font-size: 13px;
+                border-radius: 12px;
+            }
+            .footer .line-1 {
+                font-size: 10px;
+            }
+            .footer .line-2 {
+                font-size: 12px;
+            }
+        }
+
+        /* ── 打印 ── */
+        @media print {
+            body {
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+            .card {
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                max-width: 100% !important;
+                aspect-ratio: auto !important;
+                height: 100vh !important;
+                padding: 36px 40px !important;
+                background: white !important;
+                border: 1px solid #eee !important;
+            }
+            .menu-toggle {
+                display: none !important;
+            }
+            .dropdown-menu {
+                display: none !important;
+            }
+            .editor {
+                border-color: #d0c8b8 !important;
+                box-shadow: none !important;
+                background: white !important;
+            }
+            .editor::before {
+                opacity: 0.10 !important;
+            }
+            .editor:empty::before {
+                content: '' !important;
+            }
+            .logo-area {
+                box-shadow: none !important;
+                border: none !important;
+                background: transparent !important;
+            }
+            .logo-area:hover {
+                transform: none !important;
+            }
+            .footer .line-1,
+            .footer .line-2 {
+                -webkit-text-fill-color: #4a3a2a !important;
+                color: #4a3a2a !important;
+                background: none !important;
+                opacity: 1 !important;
+            }
+            .main-title {
+                -webkit-text-fill-color: #c41a1a !important;
+                color: #c41a1a !important;
+                background: none !important;
+                filter: none !important;
+                text-shadow: none !important;
+            }
+            .main-title::after {
+                display: none !important;
+            }
+            .date-display .date-text {
+                -webkit-text-fill-color: #6b5a3e !important;
+                color: #6b5a3e !important;
+                background: none !important;
+            }
+            .sub-header {
+                border-bottom-color: #ddd !important;
+            }
+            .footer {
+                border-top-color: #ddd !important;
+            }
+        }
+
+        /* ── Toast 提示 ── */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.78);
+            color: #fff;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-size: 15px;
+            font-weight: 500;
+            backdrop-filter: blur(8px);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+            white-space: nowrap;
+            max-width: 90%;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== 9:16 卡片 ===== -->
+    <div class="card" id="appCard">
+
+        <!-- 顶部：菜单 + 标题 + LOGO -->
+        <div class="header">
+            <!-- 汉堡菜单按钮 -->
+            <button class="menu-toggle" id="menuToggle" aria-label="菜单">☰</button>
+
+            <!-- 下拉菜单 -->
+            <div class="dropdown-menu" id="dropdownMenu">
+                <button class="menu-item" data-action="screenshot">
+                    <span class="icon">📷</span> 截图
+                </button>
+                <button class="menu-item" data-action="bgcolor">
+                    <span class="icon">🎨</span> 底色
+                </button>
+                <button class="menu-item" data-action="bgimage">
+                    <span class="icon">🖼️</span> 底图
+                    <span class="badge">双击清除</span>
+                </button>
+                <button class="menu-item" data-action="print">
+                    <span class="icon">🖨️</span> 打印
+                </button>
+                <button class="menu-item" data-action="reset" style="border-top:1px solid rgba(212,160,23,0.10);margin-top:4px;">
+                    <span class="icon">🔄</span> 默认
+                    <span class="badge">恢复初始</span>
+                </button>
+            </div>
+
+            <!-- 隐藏的 input -->
+            <input type="color" id="bgColorPicker" class="hidden-input" value="#ffffff" />
+            <input type="file" id="bgImageInput" class="hidden-input" accept="image/*" />
+
+            <!-- 居中标题 -->
+            <div class="title-wrapper">
+                <h1 class="main-title">今日3D推荐</h1>
+            </div>
+
+            <!-- 右上角 LOGO (直接加载 launchericon-512x512.png) -->
+            <!-- ⭐ 封装提示: 将 launchericon-512x512.png 放在应用根目录或 assets 文件夹,
+                 并将下方的 src 修改为对应的路径, 例如: src="assets/launchericon-512x512.png" -->
+            <div class="logo-area" id="logoArea" title="LOGO (点击可更换)">
+                <img id="logoImg" src="launchericon-512x512.png" alt="鸿奇添LOGO" style="display:block;width:100%;height:100%;object-fit:contain;" />
+                <!-- 占位元素隐藏，图片加载失败时可通过JS显示 -->
+                <div class="logo-placeholder" id="logoPlaceholder" style="display:none;">
+                    <span class="logo-char">鸿奇添</span>
+                    <span class="logo-sub">✦ 俱乐部 ✦</span>
+                </div>
+                <input type="file" id="logoUpload" accept="image/*" />
+            </div>
+        </div>
+
+        <!-- 日期区域 (可直接编辑) -->
+        <div class="sub-header">
+            <div class="date-display">
+                <span class="date-icon">📅</span>
+                <span class="date-text" id="dateText" contenteditable="true" spellcheck="false">2026年6月13日 星期六</span>
+            </div>
+        </div>
+
+        <!-- 正文编辑区域 -->
+        <div class="editor-wrapper">
+            <div class="editor" id="editor" contenteditable="true" spellcheck="true">
+                <!-- 用户编辑的内容将在这里 -->
+            </div>
+        </div>
+
+        <!-- 底部声明 -->
+        <div class="footer">
+            <span class="line-1">以上谨代表个人观点，谨慎参考</span>
+            <span class="line-2">北京鸿奇添彩友俱乐部</span>
+        </div>
+
+    </div>
+
+    <!-- Toast 提示 -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ─── DOM ───
+            const card = document.getElementById('appCard');
+            const editor = document.getElementById('editor');
+            const dateText = document.getElementById('dateText');
+            const menuToggle = document.getElementById('menuToggle');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            const bgColorPicker = document.getElementById('bgColorPicker');
+            const bgImageInput = document.getElementById('bgImageInput');
+            const logoArea = document.getElementById('logoArea');
+            const logoImg = document.getElementById('logoImg');
+            const logoPlaceholder = document.getElementById('logoPlaceholder');
+            const logoUpload = document.getElementById('logoUpload');
+            const toast = document.getElementById('toast');
+
+            // ─── 存储 ───
+            const STORAGE_CONTENT = 'hq3d_editor_content_v11';
+            const STORAGE_BG = 'hq3d_card_bg_v11';
+            const STORAGE_LOGO = 'hq3d_logo_data_v11';
+            const STORAGE_BGIMAGE = 'hq3d_bgimage_data_v11';
+            const STORAGE_DATE = 'hq3d_date_text_v11';
+
+            // ─── 默认 ───
+            const DEFAULT_CONTENT = `
+                <p style="font-weight:600;color:#c41a1a;">📌 本期3D推荐号码：</p>
+                <p style="font-size:22px;letter-spacing:4px;color:#d4a017;font-weight:700;">
+                    5 8 2 &nbsp;·&nbsp; 3 6 9 &nbsp;·&nbsp; 1 4 7
+                </p>
+                <p style="margin-top:8px;color:#6b5a3e;">
+                    🔹 定位胆：百位 5 6 8 &nbsp; 十位 2 3 7 &nbsp; 个位 1 4 9
+                </p>
+                <p style="color:#6b5a3e;">
+                    🔹 组选：356 389 478 259 168
+                </p>
+                <p style="color:#a67c2e;font-style:italic;margin-top:6px;">
+                    —— 仅供参考，量力而行 ——
+                </p>
+            `;
+
+            const DEFAULT_BG = '#ffffff';
+            const DEFAULT_FONT_SIZE = 18;
+
+            // ─── Toast ───
+            let toastTimer = null;
+
+            function showToast(msg, duration = 1800) {
+                toast.textContent = msg;
+                toast.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, duration);
+            }
+
+            // ─── 1. 日期编辑 ───
+            function loadDate() {
+                const saved = localStorage.getItem(STORAGE_DATE);
+                if (saved && saved.trim() !== '') {
+                    dateText.textContent = saved;
+                } else {
+                    const now = new Date();
+                    const y = now.getFullYear();
+                    const m = String(now.getMonth() + 1).padStart(2, '0');
+                    const d = String(now.getDate()).padStart(2, '0');
+                    const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+                    const w = weekdays[now.getDay()];
+                    dateText.textContent = `${y}年${m}月${d}日 星期${w}`;
+                }
+            }
+            loadDate();
+
+            dateText.addEventListener('blur', function() {
+                const val = this.textContent.trim();
+                if (val) {
+                    localStorage.setItem(STORAGE_DATE, val);
+                } else {
+                    const now = new Date();
+                    const y = now.getFullYear();
+                    const m = String(now.getMonth() + 1).padStart(2, '0');
+                    const d = String(now.getDate()).padStart(2, '0');
+                    const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+                    const w = weekdays[now.getDay()];
+                    this.textContent = `${y}年${m}月${d}日 星期${w}`;
+                    localStorage.setItem(STORAGE_DATE, this.textContent);
+                }
+            });
+
+            dateText.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    this.blur();
+                }
+            });
+
+            // ─── 2. 编辑器内容 ───
+            function loadContent() {
+                const saved = localStorage.getItem(STORAGE_CONTENT);
+                if (saved && saved.trim() !== '') {
+                    editor.innerHTML = saved;
+                } else {
+                    editor.innerHTML = DEFAULT_CONTENT;
+                }
+            }
+            loadContent();
+
+            let saveTimer = null;
+
+            function saveContent() {
+                clearTimeout(saveTimer);
+                saveTimer = setTimeout(() => {
+                    localStorage.setItem(STORAGE_CONTENT, editor.innerHTML);
+                }, 300);
+            }
+            editor.addEventListener('input', saveContent);
+
+            // ─── 3. 字号固定 ───
+            editor.style.fontSize = DEFAULT_FONT_SIZE + 'px';
+
+            // ─── 4. 底色 ───
+            function loadBgColor() {
+                const saved = localStorage.getItem(STORAGE_BG);
+                if (saved) {
+                    card.style.backgroundColor = saved;
+                    bgColorPicker.value = saved;
+                } else {
+                    card.style.backgroundColor = DEFAULT_BG;
+                    bgColorPicker.value = DEFAULT_BG;
+                }
+            }
+            loadBgColor();
+
+            bgColorPicker.addEventListener('input', function() {
+                const color = this.value;
+                card.style.backgroundColor = color;
+                localStorage.setItem(STORAGE_BG, color);
+            });
+
+            // ─── 5. LOGO ───
+            // 加载外部图片，如果失败则显示占位符
+            logoImg.addEventListener('error', function() {
+                this.style.display = 'none';
+                logoPlaceholder.style.display = 'flex';
+            });
+
+            // 成功加载时隐藏占位符
+            logoImg.addEventListener('load', function() {
+                this.style.display = 'block';
+                logoPlaceholder.style.display = 'none';
+            });
+
+            // 点击LOGO区域触发上传 (便于封装后更换)
+            logoArea.addEventListener('click', function(e) {
+                if (e.target.tagName === 'INPUT') return;
+                logoUpload.click();
+            });
+
+            logoUpload.addEventListener('change', function(e) {
+                const file = this.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    const dataUrl = ev.target.result;
+                    logoImg.src = dataUrl;
+                    logoImg.style.display = 'block';
+                    logoPlaceholder.style.display = 'none';
+                    localStorage.setItem(STORAGE_LOGO, dataUrl);
+                    showToast('✅ LOGO已上传');
+                };
+                reader.readAsDataURL(file);
+                this.value = '';
+            });
+
+            // ─── 6. 底图 ───
+            function loadBgImage() {
+                const saved = localStorage.getItem(STORAGE_BGIMAGE);
+                if (saved) {
+                    editor.style.setProperty('--bg-image', `url(${saved})`);
+                } else {
+                    editor.style.setProperty('--bg-image', 'none');
+                }
+            }
+            loadBgImage();
+
+            bgImageInput.addEventListener('change', function(e) {
+                const file = this.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    const dataUrl = ev.target.result;
+                    editor.style.setProperty('--bg-image', `url(${dataUrl})`);
+                    localStorage.setItem(STORAGE_BGIMAGE, dataUrl);
+                    showToast('✅ 底图已上传 (透明度15%)');
+                };
+                reader.readAsDataURL(file);
+                this.value = '';
+            });
+
+            function clearBgImage() {
+                editor.style.setProperty('--bg-image', 'none');
+                localStorage.removeItem(STORAGE_BGIMAGE);
+                showToast('🗑️ 底图已清除');
+            }
+
+            // ─── 7. 菜单控制 ───
+            let isMenuOpen = false;
+
+            function toggleMenu(e) {
+                e.stopPropagation();
+                isMenuOpen = !isMenuOpen;
+                if (isMenuOpen) {
+                    dropdownMenu.classList.add('open');
+                } else {
+                    dropdownMenu.classList.remove('open');
+                }
+            }
+
+            function closeMenu() {
+                isMenuOpen = false;
+                dropdownMenu.classList.remove('open');
+            }
+
+            menuToggle.addEventListener('click', toggleMenu);
+
+            dropdownMenu.addEventListener('click', function(e) {
+                const item = e.target.closest('.menu-item');
+                if (!item) return;
+                const action = item.dataset.action;
+
+                switch (action) {
+                    case 'screenshot':
+                        handleScreenshot();
+                        break;
+                    case 'bgcolor':
+                        bgColorPicker.click();
+                        break;
+                    case 'bgimage':
+                        bgImageInput.click();
+                        break;
+                    case 'print':
+                        window.print();
+                        break;
+                    case 'reset':
+                        handleReset();
+                        break;
+                }
+                closeMenu();
+            });
+
+            dropdownMenu.addEventListener('dblclick', function(e) {
+                const item = e.target.closest('.menu-item');
+                if (item && item.dataset.action === 'bgimage') {
+                    clearBgImage();
+                    closeMenu();
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                if (menuToggle.contains(e.target)) return;
+                if (dropdownMenu.contains(e.target)) return;
+                if (isMenuOpen) {
+                    closeMenu();
+                }
+            });
+
+            // ─── 8. 截图 ───
+            async function handleScreenshot() {
+                try {
+                    closeMenu();
+                    await new Promise(r => setTimeout(r, 100));
+
+                    if (typeof html2canvas === 'undefined') {
+                        showToast('⏳ 截图库加载中…');
+                        await loadHtml2Canvas();
+                    }
+
+                    showToast('📸 正在截取…');
+
+                    const canvas = await html2canvas(card, {
+                        scale: 2.5,
+                        useCORS: true,
+                        allowTaint: true,
+                        backgroundColor: null,
+                        logging: false,
+                        width: card.scrollWidth,
+                        height: card.scrollHeight,
+                        onclone: function(clonedDoc, clonedElement) {
+                            // 标题：去除渐变，设置纯色
+                            const title = clonedElement.querySelector('.main-title');
+                            if (title) {
+                                title.style.background = 'none';
+                                title.style.webkitBackgroundClip = 'unset';
+                                title.style.webkitTextFillColor = '#b81a1a';
+                                title.style.color = '#b81a1a';
+                                title.style.filter = 'none';
+                                title.style.textShadow = 'none';
+                                const after = title.querySelector('::after');
+                                if (after) after.style.display = 'none';
+                            }
+
+                            // 底部文字：去除渐变
+                            const lines = clonedElement.querySelectorAll('.footer .line-1, .footer .line-2');
+                            lines.forEach(el => {
+                                el.style.background = 'none';
+                                el.style.webkitBackgroundClip = 'unset';
+                                el.style.webkitTextFillColor = '#6b4a2a';
+                                el.style.color = '#6b4a2a';
+                                el.style.filter = 'none';
+                                el.style.opacity = '1';
+                            });
+                            const line2 = clonedElement.querySelector('.footer .line-2');
+                            if (line2) {
+                                line2.style.color = '#c41a1a';
+                                line2.style.webkitTextFillColor = '#c41a1a';
+                            }
+
+                            // 日期文字
+                            const dateEl = clonedElement.querySelector('.date-text');
+                            if (dateEl) {
+                                dateEl.style.background = 'none';
+                                dateEl.style.webkitBackgroundClip = 'unset';
+                                dateEl.style.webkitTextFillColor = '#6b5a3e';
+                                dateEl.style.color = '#6b5a3e';
+                            }
+                        }
+                    });
+
+                    const link = document.createElement('a');
+                    const timestamp = new Date().toISOString().slice(0, 19).replace(/[:-]/g, '');
+                    link.download = `今日3D推荐_${timestamp}.png`;
+                    link.href = canvas.toDataURL('image/png');
+
+                    if (navigator.share && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+                        try {
+                            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+                            const file = new File([blob], `今日3D推荐_${timestamp}.png`, { type: 'image/png' });
+                            await navigator.share({
+                                files: [file],
+                                title: '今日3D推荐',
+                            });
+                            showToast('✅ 截图已分享');
+                            return;
+                        } catch (shareErr) {
+                            if (shareErr.name === 'AbortError') {
+                                showToast('⚠️ 分享取消');
+                                return;
+                            }
+                            link.click();
+                            showToast('✅ 截图已保存 (下载)');
+                        }
+                    } else {
+                        link.click();
+                        showToast('✅ 截图已保存');
+                    }
+
+                } catch (err) {
+                    console.error('截图失败:', err);
+                    showToast('❌ 截图失败，请重试');
+                }
+            }
+
+            function loadHtml2Canvas() {
+                return new Promise((resolve, reject) => {
+                    if (typeof html2canvas !== 'undefined') {
+                        resolve();
+                        return;
+                    }
+                    const script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+                    script.onload = () => resolve();
+                    script.onerror = () => reject(new Error('html2canvas 加载失败'));
+                    document.head.appendChild(script);
+                });
+            }
+
+            // ─── 9. 默认恢复 ───
+            function handleReset() {
+                card.style.backgroundColor = DEFAULT_BG;
+                bgColorPicker.value = DEFAULT_BG;
+                localStorage.setItem(STORAGE_BG, DEFAULT_BG);
+
+                clearBgImage();
+
+                // 恢复默认LOGO (重新加载 launchericon-512x512.png)
+                logoImg.src = 'launchericon-512x512.png';
+                logoImg.style.display = 'block';
+                logoPlaceholder.style.display = 'none';
+                localStorage.removeItem(STORAGE_LOGO);
+
+                editor.innerHTML = DEFAULT_CONTENT;
+                localStorage.setItem(STORAGE_CONTENT, DEFAULT_CONTENT);
+
+                const now = new Date();
+                const y = now.getFullYear();
+                const m = String(now.getMonth() + 1).padStart(2, '0');
+                const d = String(now.getDate()).padStart(2, '0');
+                const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+                const w = weekdays[now.getDay()];
+                const defaultDate = `${y}年${m}月${d}日 星期${w}`;
+                dateText.textContent = defaultDate;
+                localStorage.setItem(STORAGE_DATE, defaultDate);
+
+                editor.style.fontSize = DEFAULT_FONT_SIZE + 'px';
+
+                showToast('🔄 已恢复默认状态');
+            }
+
+            // ─── 10. 窗口关闭保存 ───
+            window.addEventListener('beforeunload', function() {
+                localStorage.setItem(STORAGE_CONTENT, editor.innerHTML);
+                localStorage.setItem(STORAGE_DATE, dateText.textContent);
+            });
+
+            // ─── 11. 预加载 html2canvas ───
+            if (typeof html2canvas === 'undefined') {
+                loadHtml2Canvas().catch(() => {});
+            }
+
+            console.log('✅ 鸿奇添·3D推荐记事本 (LOGO已替换为 launchericon-512x512.png)');
+            console.log('⭐ 封装提示: 请将 launchericon-512x512.png 放在应用根目录或 assets 文件夹, 并调整 <img src="..."> 路径。');
+        })();
+    </script>
+
+</body>
+</html>
