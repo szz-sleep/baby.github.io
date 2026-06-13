@@ -2,12 +2,12 @@
   "background_color": "#ffffff",
   "dir": "ltr",
   "display": "standalone",
-  "name":"3dzhushou",
+  "name": "鸿奇添3D助手",
   "orientation": "any",
   "scope": "/",
-  "short_name": "3d",
+  "short_name": "鸿奇添",
   "start_url": "/",
   "theme_color": "#ffffff",
   "id": "hongqitian.app",
-  "description": "3D。"
+  "description": "专业的3D号码推荐与记录工具。"
 }
