@@ -9,5 +9,13 @@
   "start_url": "/",
   "theme_color": "#ffffff",
   "id": "hongqitian.app",
-  "description": "专业的3D号码推荐与记录工具。"
+  "description": "专业的3D号码推荐与记录工具。",
+  "icons": [
+    {
+      "src": "/launchericon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }
