@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>今日3D推荐 · 鸿奇添彩友俱乐部</title>
+    <title>鸿奇添彩友俱乐部·今日推荐 </title>
     <!-- 关键配置：告诉浏览器去哪里找应用清单 -->
     <link rel="manifest" href="./manifest.json" />
     <style>
-         /* ── 全局重置 ── */
+        /* ── 全局重置 ── */
         * {
             margin: 0;
             padding: 0;
@@ -41,20 +41,29 @@
             overflow: hidden;
         }
 
-        /* ── 顶部栏 ── */
+        /* ── 顶部栏 (重构为绝对定位两侧 + 中间堆叠) ── */
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-shrink: 0;
-            min-height: 64px;
-            margin-bottom: 4px;
             position: relative;
+            display: flex;
+            justify-content: center;
+            flex-shrink: 0;
+            min-height: 60px;
+            margin-bottom: 0px;
             z-index: 10;
-            padding: 0 0;
         }
 
-        /* ── 汉堡菜单按钮 ── */
+        /* ── 左上角按钮组 (绝对定位) ── */
+        .action-group {
+            position: absolute;
+            left: 0;
+            top: 2px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            z-index: 20;
+        }
+
         .menu-toggle {
             display: flex;
             align-items: center;
@@ -67,21 +76,32 @@
             border: 1px solid rgba(212, 160, 23, 0.10);
             cursor: pointer;
             transition: background 0.2s, transform 0.2s;
-            flex-shrink: 0;
-            position: relative;
-            z-index: 20;
             font-size: clamp(18px, 4vw, 24px);
             color: #6b5a3e;
             user-select: none;
         }
+        .menu-toggle:hover { background: rgba(212, 160, 23, 0.12); }
+        .menu-toggle:active { transform: scale(0.92); }
 
-        .menu-toggle:hover {
-            background: rgba(212, 160, 23, 0.12);
+        /* ── 保存按钮 ── */
+        .save-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: clamp(32px, 7vw, 38px);
+            height: clamp(32px, 7vw, 38px);
+            border-radius: 50%;
+            background: rgba(196, 26, 26, 0.85);
+            border: none;
+            cursor: pointer;
+            font-size: clamp(16px, 4vw, 22px);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(196, 26, 26, 0.2);
+            transition: background 0.2s, transform 0.2s;
+            user-select: none;
         }
-
-        .menu-toggle:active {
-            transform: scale(0.92);
-        }
+        .save-btn:hover { background: rgba(160, 16, 16, 0.95); }
+        .save-btn:active { transform: scale(0.92); }
 
         /* ── 下拉菜单 ── */
         .dropdown-menu {
@@ -127,21 +147,9 @@
             font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
         }
 
-        .dropdown-menu .menu-item:hover {
-            background: rgba(212, 160, 23, 0.08);
-        }
-
-        .dropdown-menu .menu-item:active {
-            background: rgba(212, 160, 23, 0.15);
-        }
-
-        .dropdown-menu .menu-item .icon {
-            font-size: 20px;
-            width: 28px;
-            text-align: center;
-            flex-shrink: 0;
-        }
-
+        .dropdown-menu .menu-item:hover { background: rgba(212, 160, 23, 0.08); }
+        .dropdown-menu .menu-item:active { background: rgba(212, 160, 23, 0.15); }
+        .dropdown-menu .menu-item .icon { font-size: 20px; width: 28px; text-align: center; flex-shrink: 0; }
         .dropdown-menu .menu-item .badge {
             font-size: 11px;
             background: rgba(212, 160, 23, 0.12);
@@ -151,21 +159,25 @@
             margin-left: auto;
         }
 
-        /* ── 隐藏的 input ── */
-        .hidden-input {
-            display: none;
-        }
+        /* ── 隐藏的 input (底图) ── */
+        .hidden-input { display: none; }
 
-        /* ── 居中标题 (今日 + 3D LOGO + 推荐) ── */
-        .title-wrapper {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 5;
-            white-space: nowrap;
+        /* ── 居中内容区 (包含标题和日期，Flex居中堆叠) ── */
+        .center-content {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            width: 100%;
+            padding-top: 6px;
+            z-index: 5;
+        }
+
+        /* ── 居中标题 ── */
+        .title-wrapper {
+            display: flex;
+            justify-content: center;
+            width: 100%;
             pointer-events: none;
         }
 
@@ -188,7 +200,6 @@
             font-size: clamp(18px, 5vw, 32px);
         }
 
-        /* 注意这里：标题中间的图标已改为 3d-512-491.png */
         .title-logo {
             height: clamp(30px, 8vw, 50px);
             width: auto;
@@ -207,30 +218,23 @@
             background: linear-gradient(90deg, transparent, #d4a017, #c41a1a, #d4a017, transparent);
             border-radius: 4px;
             opacity: 0.35;
-            -webkit-text-fill-color: transparent;
         }
 
-        /* ── 右上角 LOGO ── */
+        /* ── 右上角 LOGO (锁定图片，取消点击修改，放大尺寸) ── */
         .logo-area {
+            position: absolute;
+            right: 0;
+            top: 2px;
             flex-shrink: 0;
-            width: clamp(60px, 16vw, 100px);
-            height: clamp(60px, 16vw, 100px);
-            border-radius: 0;
+            width: clamp(80px, 20vw, 130px);
+            height: clamp(80px, 20vw, 130px);
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.2s;
             background: transparent;
             border: none;
-            margin-left: 4px;
-            position: relative;
             z-index: 15;
-        }
-
-        .logo-area:hover {
-            transform: scale(1.05);
         }
 
         .logo-area img {
@@ -241,56 +245,16 @@
             border-radius: 4px;
         }
 
-        .logo-area .logo-placeholder {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-family: 'PingFang SC', 'Microsoft YaHei', serif;
-            font-weight: 700;
-            color: #a67c2e;
-            font-size: clamp(12px, 3vw, 16px);
-            line-height: 1.3;
-            text-align: center;
-            padding: 4px;
-            background: rgba(212, 160, 23, 0.04);
-            border: 2px dashed #d4a017;
-            border-radius: 6px;
-            width: 100%;
-            height: 100%;
-        }
-
-        .logo-area .logo-placeholder .logo-char {
-            font-size: clamp(16px, 4.5vw, 24px);
-            color: #c41a1a;
-            letter-spacing: 3px;
-        }
-
-        .logo-area .logo-placeholder .logo-sub {
-            font-size: clamp(7px, 2vw, 10px);
-            color: #d4a017;
-            letter-spacing: 2px;
-            border-top: 1px solid #d4a017;
-            padding-top: 2px;
-            margin-top: 2px;
-        }
-
-        .logo-area input[type="file"] {
-            display: none;
-        }
-
-        /* ── 日期区域 (分两行) ── */
+        /* ── 日期区域 (稍微下移，增加呼吸感) ── */
         .sub-header {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            margin-bottom: 6px;
-            padding-bottom: 4px;
+            width: 100%;
+            margin-top: 12px; /* 这里稍微增加了距离，标题和日期分开了一点 */
+            padding-bottom: 2px;
             border-bottom: 2px solid rgba(212, 160, 23, 0.08);
-            position: relative;
-            z-index: 5;
+            margin-bottom: 0px;
             gap: 2px;
         }
 
@@ -306,13 +270,7 @@
             user-select: text;
         }
 
-        .date-row .date-icon {
-            font-size: clamp(14px, 3vw, 18px);
-            line-height: 1;
-            display: inline-block;
-            flex-shrink: 0;
-        }
-
+        .date-row .date-icon { font-size: clamp(14px, 3vw, 18px); line-height: 1; display: inline-block; flex-shrink: 0; }
         .date-row .date-text {
             background: linear-gradient(135deg, #c41a1a, #d4a017);
             -webkit-background-clip: text;
@@ -328,17 +286,8 @@
             line-height: 1.4;
             display: inline-block;
         }
-
-        .date-row .date-text:focus {
-            border-bottom-color: #d4a017;
-        }
-
-        .date-row .date-text:empty::before {
-            content: '点击编辑日期';
-            color: #b8a88a;
-            -webkit-text-fill-color: #b8a88a;
-            font-weight: 400;
-        }
+        .date-row .date-text:focus { border-bottom-color: #d4a017; }
+        .date-row .date-text:empty::before { content: '点击编辑日期'; color: #b8a88a; font-weight: 400; }
 
         .issue-row {
             font-size: clamp(10px, 2vw, 13px);
@@ -346,7 +295,6 @@
             font-weight: 400;
             letter-spacing: 1px;
         }
-
         .issue-row .issue-text {
             font-weight: 600;
             color: #a67c2e;
@@ -355,22 +303,14 @@
             border-bottom: 2px solid transparent;
             transition: border-color 0.2s;
         }
-
-        .issue-row .issue-text:focus {
-            border-bottom-color: #d4a017;
-        }
-
-        .issue-row .issue-text:empty::before {
-            content: '3D期号';
-            color: #b8a88a;
-            font-weight: 400;
-        }
+        .issue-row .issue-text:focus { border-bottom-color: #d4a017; }
+        .issue-row .issue-text:empty::before { content: '期号'; color: #b8a88a; font-weight: 400; }
 
         /* ── 正文编辑区域 ── */
         .editor-wrapper {
             flex: 1;
             min-height: 0;
-            margin: 2px 0 6px;
+            margin: 4px 0 4px;
             position: relative;
         }
 
@@ -400,12 +340,7 @@
             box-shadow: inset 0 2px 12px rgba(212, 160, 23, 0.06), 0 0 0 4px rgba(212, 160, 23, 0.06);
         }
 
-        .editor:empty::before {
-            content: '✎ 在这里输入您的3D号码推荐…';
-            color: #b8a88a;
-            font-weight: 400;
-            pointer-events: none;
-        }
+        .editor:empty::before { content: '✎ 在这里输入您的号码推荐…'; color: #b8a88a; font-weight: 400; pointer-events: none; }
 
         .editor::before {
             content: '';
@@ -423,11 +358,7 @@
             z-index: 0;
             transition: opacity 0.3s;
         }
-
-        .editor>* {
-            position: relative;
-            z-index: 1;
-        }
+        .editor>* { position: relative; z-index: 1; }
 
         /* ── 底部声明 ── */
         .footer {
@@ -466,109 +397,30 @@
 
         /* ── 响应式 ── */
         @media (max-width: 600px) {
-            .card {
-                padding: 18px 16px 16px;
-                border-radius: 18px;
-            }
-            .header {
-                min-height: 54px;
-            }
-            .editor {
-                padding: 12px 14px;
-                font-size: 16px;
-                border-radius: 14px;
-            }
+            .card { padding: 18px 16px 16px; border-radius: 18px; }
+            .header { min-height: 54px; }
+            .editor { padding: 12px 14px; font-size: 16px; border-radius: 14px; }
         }
 
         @media (max-width: 420px) {
-            .card {
-                padding: 12px 10px 10px;
-                border-radius: 14px;
-            }
-            .editor {
-                padding: 10px 12px;
-                font-size: 14px;
-                border-radius: 12px;
-            }
+            .card { padding: 12px 10px 10px; border-radius: 14px; }
+            .editor { padding: 10px 12px; font-size: 14px; border-radius: 12px; }
         }
 
         /* ── 打印 ── */
         @media print {
-            body {
-                background: white !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-            }
-            .card {
-                box-shadow: none !important;
-                border-radius: 0 !important;
-                max-width: 100% !important;
-                aspect-ratio: auto !important;
-                height: 100vh !important;
-                padding: 36px 40px !important;
-                background: white !important;
-                border: 1px solid #eee !important;
-            }
-            .menu-toggle {
-                display: none !important;
-            }
-            .dropdown-menu {
-                display: none !important;
-            }
-            .editor {
-                border-color: #d0c8b8 !important;
-                box-shadow: none !important;
-                background: white !important;
-            }
-            .editor::before {
-                opacity: 0.10 !important;
-            }
-            .editor:empty::before {
-                content: '' !important;
-            }
-            .logo-area {
-                box-shadow: none !important;
-                border: none !important;
-                background: transparent !important;
-            }
-            .logo-area:hover {
-                transform: none !important;
-            }
-            .logo-area .logo-placeholder {
-                border-color: #ccc !important;
-                background: #faf8f4 !important;
-            }
-            .footer .line-1,
-            .footer .line-2 {
-                -webkit-text-fill-color: #4a3a2a !important;
-                color: #4a3a2a !important;
-                background: none !important;
-                opacity: 1 !important;
-            }
-            .main-title {
-                -webkit-text-fill-color: #c41a1a !important;
-                color: #c41a1a !important;
-                background: none !important;
-                filter: none !important;
-                text-shadow: none !important;
-            }
-            .main-title::after {
-                display: none !important;
-            }
-            .date-row .date-text {
-                -webkit-text-fill-color: #6b5a3e !important;
-                color: #6b5a3e !important;
-                background: none !important;
-            }
-            .sub-header {
-                border-bottom-color: #ddd !important;
-            }
-            .footer {
-                border-top-color: #ddd !important;
-            }
+            body { background: white !important; padding: 0 !important; margin: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; }
+            .card { box-shadow: none !important; border-radius: 0 !important; max-width: 100% !important; aspect-ratio: auto !important; height: 100vh !important; padding: 36px 40px !important; background: white !important; border: 1px solid #eee !important; }
+            .menu-toggle, .save-btn, .dropdown-menu { display: none !important; }
+            .editor { border-color: #d0c8b8 !important; box-shadow: none !important; background: white !important; }
+            .editor::before { opacity: 0.10 !important; }
+            .logo-area { box-shadow: none !important; border: none !important; background: transparent !important; }
+            .footer .line-1, .footer .line-2 { -webkit-text-fill-color: #4a3a2a !important; color: #4a3a2a !important; background: none !important; opacity: 1 !important; }
+            .main-title { -webkit-text-fill-color: #c41a1a !important; color: #c41a1a !important; background: none !important; filter: none !important; text-shadow: none !important; }
+            .main-title::after { display: none !important; }
+            .date-row .date-text { -webkit-text-fill-color: #6b5a3e !important; color: #6b5a3e !important; background: none !important; }
+            .sub-header { border-bottom-color: #ddd !important; }
+            .footer { border-top-color: #ddd !important; }
         }
 
         /* ── Toast 提示 ── */
@@ -591,10 +443,7 @@
             white-space: nowrap;
             max-width: 90%;
         }
-
-        .toast.show {
-            opacity: 1;
-        }
+        .toast.show { opacity: 1; }
 
         /* ── 色板居中弹窗 ── */
         #colorPickerOverlay {
@@ -610,47 +459,135 @@
             justify-content: center;
             z-index: 9999;
         }
-
-        #colorPickerOverlay.active {
-            display: flex;
-        }
-
+        #colorPickerOverlay.active { display: flex; }
         #colorPickerOverlay input[type="color"] {
-            width: 80px;
-            height: 80px;
-            border: 6px solid #fff;
-            border-radius: 50%;
-            cursor: pointer;
-            padding: 0;
-            background: none;
-            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25);
-            transition: transform 0.2s;
+            width: 80px; height: 80px; border: 6px solid #fff; border-radius: 50%; cursor: pointer; padding: 0; background: none; box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25); transition: transform 0.2s;
+        }
+        #colorPickerOverlay input[type="color"]:hover { transform: scale(1.05); }
+        #colorPickerOverlay input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        #colorPickerOverlay input[type="color"]::-webkit-color-swatch { border: none; border-radius: 50%; }
+        #colorPickerOverlay .close-area { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer; }
+        #colorPickerOverlay .picker-container { position: relative; z-index: 1; }
+
+        /* ── 历史记录弹窗 ── */
+        #historyOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        #historyOverlay.active { display: flex; }
+
+        #historyOverlay .history-container {
+            background: #ffffff;
+            border-radius: 28px;
+            width: 90%;
+            max-width: 440px;
+            max-height: 80vh;
+            padding: 20px 22px 24px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.20);
         }
 
-        #colorPickerOverlay input[type="color"]:hover {
-            transform: scale(1.05);
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-shrink: 0;
         }
-        #colorPickerOverlay input[type="color"]::-webkit-color-swatch-wrapper {
-            padding: 0;
+        .history-header h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #4a3a2a;
         }
-        #colorPickerOverlay input[type="color"]::-webkit-color-swatch {
-            border: none;
-            border-radius: 50%;
-        }
-
-        #colorPickerOverlay .close-area {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
+        .history-header .close-history-btn {
+            background: none; border: none; font-size: 24px; cursor: pointer; color: #6b5a3e; padding: 0 4px;
         }
 
-        #colorPickerOverlay .picker-container {
-            position: relative;
-            z-index: 1;
+        #historyList {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-right: 4px;
         }
+        #historyList::-webkit-scrollbar { width: 4px; }
+        #historyList::-webkit-scrollbar-thumb { background: #d4a017; border-radius: 4px; }
+
+        .history-item {
+            display: flex;
+            flex-direction: column;
+            background: #f8f6f2;
+            border-radius: 16px;
+            padding: 12px 16px;
+            border: 1px solid rgba(212, 160, 23, 0.10);
+            gap: 6px;
+        }
+        .history-item .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .history-item .item-title {
+            font-weight: 600;
+            font-size: 15px;
+            color: #2c241a;
+            word-break: break-all;
+        }
+        .history-item .item-meta {
+            font-size: 12px;
+            color: #8a7a5a;
+            display: flex;
+            gap: 8px;
+        }
+        .history-item .item-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+        }
+        .history-item .item-actions button {
+            padding: 4px 12px; border: none; border-radius: 20px; font-size: 12px; font-weight: 500; cursor: pointer; transition: background 0.2s;
+        }
+        .history-item .load-btn { background: #d4a017; color: #fff; }
+        .history-item .load-btn:hover { background: #b88a0f; }
+        .history-item .del-btn { background: #e0d6c8; color: #6b5a3e; }
+        .history-item .del-btn:hover { background: #cdc0b0; }
+
+        /* 保存标题输入框 弹窗 */
+        #saveTitleOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(2px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        #saveTitleOverlay.active { display: flex; }
+        .save-title-box {
+            background: #fff; border-radius: 20px; padding: 24px; width: 80%; max-width: 360px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column; gap: 12px;
+        }
+        .save-title-box label { font-size: 16px; font-weight: 600; color: #4a3a2a; }
+        .save-title-box input {
+            padding: 10px 14px; font-size: 15px; border: 2px solid rgba(212, 160, 23, 0.25); border-radius: 12px; outline: none; transition: border-color 0.2s;
+        }
+        .save-title-box input:focus { border-color: #d4a017; }
+        .save-title-box .btn-group { display: flex; gap: 10px; justify-content: flex-end; margin-top: 4px; }
+        .save-title-box .btn-group button { padding: 8px 20px; border: none; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .save-title-box .btn-confirm { background: #c41a1a; color: #fff; }
+        .save-title-box .btn-confirm:hover { background: #a01010; }
+        .save-title-box .btn-cancel { background: #e0d6c8; color: #4a3a2a; }
+        .save-title-box .btn-cancel:hover { background: #cdc0b0; }
     </style>
 </head>
 
@@ -659,67 +596,59 @@
     <!-- ===== 9:16 卡片 ===== -->
     <div class="card" id="appCard">
 
-        <!-- 顶部：菜单 + 标题 + LOGO -->
+        <!-- 顶部：菜单 + 保存 + 标题 + LOGO -->
         <div class="header">
-            <!-- 汉堡菜单按钮 -->
-            <button class="menu-toggle" id="menuToggle" aria-label="菜单">☰</button>
-
-            <!-- 下拉菜单 -->
-            <div class="dropdown-menu" id="dropdownMenu">
-                <button class="menu-item" data-action="screenshot">
-                    <span class="icon">📷</span> 截图
-                </button>
-                <button class="menu-item" data-action="bgcolor">
-                    <span class="icon">🎨</span> 底色
-                </button>
-                <button class="menu-item" data-action="bgimage">
-                    <span class="icon">🖼️</span> 底图
-                    <span class="badge">双击清除</span>
-                </button>
-                <button class="menu-item" data-action="print">
-                    <span class="icon">🖨️</span> 打印
-                </button>
-                <button class="menu-item" data-action="reset" style="border-top:1px solid rgba(212,160,23,0.10);margin-top:4px;">
-                    <span class="icon">🔄</span> 默认
-                    <span class="badge">恢复初始</span>
-                </button>
+            <!-- 左上角：菜单与保存按钮垂直排列 (绝对定位) -->
+            <div class="action-group">
+                <button class="menu-toggle" id="menuToggle" aria-label="菜单">☰</button>
+                <button class="save-btn" id="saveHistoryBtn" title="保存为历史记录">💾</button>
             </div>
 
-            <!-- 隐藏的 input (底图) -->
-            <input type="file" id="bgImageInput" class="hidden-input" accept="image/*" />
-
-            <!-- 居中标题 -->
-            <div class="title-wrapper">
-                <h1 class="main-title">
-                    今日
-                    <!-- 这里已改为您的 3d-512-491.png -->
-                    <img src="3d-512-491.png" class="title-logo" alt="3D" />
-                    推荐
-                </h1>
-            </div>
-
-            <!-- 右上角 LOGO (如需修改，请改此处 src) -->
-            <div class="logo-area" id="logoArea" title="LOGO (点击可更换)">
+            <!-- 右上角 LOGO (锁定放大，绝对定位) -->
+            <div class="logo-area">
                 <img id="logoImg" src="launchericon-512x512.png" alt="鸿奇添LOGO" style="display:block;width:100%;height:100%;object-fit:contain;" />
-                <div class="logo-placeholder" id="logoPlaceholder" style="display:none;">
-                    <span class="logo-char">鸿奇添</span>
-                    <span class="logo-sub">✦ 俱乐部 ✦</span>
+            </div>
+
+            <!-- 居中内容 (标题 + 日期) -->
+            <div class="center-content">
+                <!-- 居中标题 -->
+                <div class="title-wrapper">
+                    <h1 class="main-title">
+                        今日
+                        <img id="titleLogoImg" src="3d-512-491.png" class="title-logo" alt="3D" />
+                        推荐
+                    </h1>
                 </div>
-                <input type="file" id="logoUpload" accept="image/*" />
+
+                <!-- 稍微下移的日期和期号 -->
+                <div class="sub-header">
+                    <div class="date-row">
+                        <span class="date-icon">📅</span>
+                        <span class="date-text" id="dateText" contenteditable="true" spellcheck="false">2026年6月13日 星期六</span>
+                    </div>
+                    <div class="issue-row">
+                        <span id="issueLabel">3D期号</span>：
+                        <span class="issue-text" id="issueText" contenteditable="true" spellcheck="false">2026-161</span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- 日期区域 -->
-        <div class="sub-header">
-            <div class="date-row">
-                <span class="date-icon">📅</span>
-                <span class="date-text" id="dateText" contenteditable="true" spellcheck="false">2026年6月13日 星期六</span>
-            </div>
-            <div class="issue-row">
-                <span>3D期号：</span>
-                <span class="issue-text" id="issueText" contenteditable="true" spellcheck="false">2026-161</span>
-            </div>
+        <!-- 下拉菜单 (基于header定位) -->
+        <div class="dropdown-menu" id="dropdownMenu">
+            <button class="menu-item" data-action="screenshot"><span class="icon">📷</span> 截图</button>
+            <button class="menu-item" data-action="bgcolor"><span class="icon">🎨</span> 底色</button>
+            <button class="menu-item" data-action="bgimage"><span class="icon">🖼️</span> 底图 <span class="badge">双击清除</span></button>
+            <button class="menu-item" data-action="switchGame"><span class="icon">🔄</span> <span id="gameSwitchText">排列3</span></button>
+            <button class="menu-item" data-action="history"><span class="icon">📚</span> 历史记录</button>
+            <button class="menu-item" data-action="print"><span class="icon">🖨️</span> 打印</button>
+            <button class="menu-item" data-action="reset" style="border-top:1px solid rgba(212,160,23,0.10);margin-top:4px;">
+                <span class="icon">🔄</span> 默认 <span class="badge">恢复初始</span>
+            </button>
         </div>
+
+        <!-- 隐藏的 input (底图) -->
+        <input type="file" id="bgImageInput" class="hidden-input" accept="image/*" />
 
         <!-- 正文编辑区域 -->
         <div class="editor-wrapper">
@@ -739,8 +668,31 @@
     <!-- 色板居中弹窗 -->
     <div id="colorPickerOverlay">
         <div class="close-area" id="colorPickerClose"></div>
-        <div class="picker-container">
-            <input type="color" id="colorPickerPopup" value="#ffffff" />
+        <div class="picker-container"><input type="color" id="colorPickerPopup" value="#ffffff" /></div>
+    </div>
+
+    <!-- 保存标题输入弹窗 -->
+    <div id="saveTitleOverlay">
+        <div class="save-title-box">
+            <label>保存备注（方便识别）</label>
+            <input type="text" id="historyTitleInput" placeholder="例：今天推荐的号码" maxlength="30" />
+            <div class="btn-group">
+                <button class="btn-cancel" id="saveTitleCancel">取消</button>
+                <button class="btn-confirm" id="saveTitleConfirm">确认保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 历史记录弹窗 -->
+    <div id="historyOverlay">
+        <div class="history-container">
+            <div class="history-header">
+                <h3>📚 历史记录</h3>
+                <button class="close-history-btn" id="closeHistoryBtn">✕</button>
+            </div>
+            <div id="historyList">
+                <!-- 动态生成的记录列表将放置于此 -->
+            </div>
         </div>
     </div>
 
@@ -756,13 +708,13 @@
             const editor = document.getElementById('editor');
             const dateText = document.getElementById('dateText');
             const issueText = document.getElementById('issueText');
+            const issueLabel = document.getElementById('issueLabel');
+            const titleLogoImg = document.getElementById('titleLogoImg');
+            const gameSwitchText = document.getElementById('gameSwitchText');
             const menuToggle = document.getElementById('menuToggle');
             const dropdownMenu = document.getElementById('dropdownMenu');
             const bgImageInput = document.getElementById('bgImageInput');
-            const logoArea = document.getElementById('logoArea');
-            const logoImg = document.getElementById('logoImg');
-            const logoPlaceholder = document.getElementById('logoPlaceholder');
-            const logoUpload = document.getElementById('logoUpload');
+            const saveHistoryBtn = document.getElementById('saveHistoryBtn');
             const toast = document.getElementById('toast');
 
             // 色板弹窗
@@ -770,46 +722,79 @@
             const colorPickerPopup = document.getElementById('colorPickerPopup');
             const colorPickerClose = document.getElementById('colorPickerClose');
 
+            // 历史记录相关
+            const historyOverlay = document.getElementById('historyOverlay');
+            const closeHistoryBtn = document.getElementById('closeHistoryBtn');
+            const historyList = document.getElementById('historyList');
+            const saveTitleOverlay = document.getElementById('saveTitleOverlay');
+            const historyTitleInput = document.getElementById('historyTitleInput');
+            const saveTitleCancel = document.getElementById('saveTitleCancel');
+            const saveTitleConfirm = document.getElementById('saveTitleConfirm');
+
             // ─── 存储 ───
-            const STORAGE_CONTENT = 'hq3d_editor_content_v22';
-            const STORAGE_BG = 'hq3d_card_bg_v22';
-            const STORAGE_LOGO = 'hq3d_logo_data_v22';
-            const STORAGE_BGIMAGE = 'hq3d_bgimage_data_v22';
-            const STORAGE_DATE = 'hq3d_date_text_v22';
-            const STORAGE_ISSUE = 'hq3d_issue_text_v22';
+            const STORAGE_CONTENT = 'hq3d_editor_content_v26';
+            const STORAGE_BG = 'hq3d_card_bg_v26';
+            const STORAGE_BGIMAGE = 'hq3d_bgimage_data_v26';
+            const STORAGE_DATE = 'hq3d_date_text_v26';
+            const STORAGE_ISSUE = 'hq3d_issue_text_v26';
+            const STORAGE_GAME = 'hq3d_game_mode_v26';
+            const STORAGE_HISTORY = 'hq3d_history_records_v26';
 
-            // ─── 默认 ───
-            const DEFAULT_CONTENT = `
-                <p style="font-weight:600;color:#c41a1a;">📌 本期3D推荐号码：</p>
-                <p style="font-size:22px;letter-spacing:4px;color:#d4a017;font-weight:700;">
-                    5 8 2 &nbsp;·&nbsp; 3 6 9 &nbsp;·&nbsp; 1 4 7
-                </p>
-                <p style="margin-top:8px;color:#6b5a3e;">
-                    🔹 定位胆：百位 5 6 8 &nbsp; 十位 2 3 7 &nbsp; 个位 1 4 9
-                </p>
-                <p style="color:#6b5a3e;">
-                    🔹 组选：356 389 478 259 168
-                </p>
-                <p style="color:#a67c2e;font-style:italic;margin-top:6px;">
-                    —— 仅供参考，量力而行 ——
-                </p>
-            `;
+            // ─── 游戏模式配置 ───
+            let currentGame = '3d';
 
-            const DEFAULT_BG = '#ffffff';
-            const DEFAULT_FONT_SIZE = 18;
-            const MIN_FONT_SIZE = 10;
-            const MAX_FONT_SIZE = 22;
+            const GAME_CONFIG = {
+                '3d': {
+                    titleImg: '3d-512-491.png',
+                    issueLabelText: '3D期号',
+                    menuText: '排列3',
+                    labelName: '3D',
+                    defaultContent: `
+                        <p style="font-weight:600;color:#c41a1a;">📌 本期号码推荐：</p>
+                        <p style="font-size:22px;letter-spacing:4px;color:#d4a017;font-weight:700;">
+                            5 8 2 &nbsp;·&nbsp; 3 6 9 &nbsp;·&nbsp; 1 4 7
+                        </p>
+                        <p style="margin-top:8px;color:#6b5a3e;">
+                            🔹 定位胆：百位 5 6 8 &nbsp; 十位 2 3 7 &nbsp; 个位 1 4 9
+                        </p>
+                        <p style="color:#6b5a3e;">
+                            🔹 组选：356 389 478 259 168
+                        </p>
+                        <p style="color:#a67c2e;font-style:italic;margin-top:6px;">
+                            —— 仅供参考，量力而行 ——
+                        </p>
+                    `
+                },
+                'pl3': {
+                    titleImg: 'pailie3-512-537.png',
+                    issueLabelText: '期号',
+                    menuText: '3D',
+                    labelName: '排列3',
+                    defaultContent: `
+                        <p style="font-weight:600;color:#c41a1a;">📌 本期号码推荐：</p>
+                        <p style="font-size:22px;letter-spacing:4px;color:#d4a017;font-weight:700;">
+                            5 8 2 &nbsp;·&nbsp; 3 6 9 &nbsp;·&nbsp; 1 4 7
+                        </p>
+                        <p style="margin-top:8px;color:#6b5a3e;">
+                            🔹 定位胆：百位 5 6 8 &nbsp; 十位 2 3 7 &nbsp; 个位 1 4 9
+                        </p>
+                        <p style="color:#6b5a3e;">
+                            🔹 组选：356 389 478 259 168
+                        </p>
+                        <p style="color:#a67c2e;font-style:italic;margin-top:6px;">
+                            —— 仅供参考，量力而行 ——
+                        </p>
+                    `
+                }
+            };
 
             // ─── Toast ───
             let toastTimer = null;
-
             function showToast(msg, duration = 1800) {
                 toast.textContent = msg;
                 toast.classList.add('show');
                 clearTimeout(toastTimer);
-                toastTimer = setTimeout(() => {
-                    toast.classList.remove('show');
-                }, duration);
+                toastTimer = setTimeout(() => { toast.classList.remove('show'); }, duration);
             }
 
             // ─── 1. 日期 & 期号 ───
@@ -827,6 +812,7 @@
                     dateText.textContent = `${y}年${m}月${d}日 星期${w}`;
                 }
             }
+            loadDate();
 
             function loadIssue() {
                 const saved = localStorage.getItem(STORAGE_ISSUE);
@@ -840,67 +826,53 @@
                     issueText.textContent = `${y}-${m}${d}`;
                 }
             }
-
-            loadDate();
             loadIssue();
 
-            dateText.addEventListener('blur', function() {
-                const val = this.textContent.trim();
-                if (val) {
-                    localStorage.setItem(STORAGE_DATE, val);
-                } else {
-                    const now = new Date();
-                    const y = now.getFullYear();
-                    const m = String(now.getMonth() + 1).padStart(2, '0');
-                    const d = String(now.getDate()).padStart(2, '0');
-                    const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
-                    const w = weekdays[now.getDay()];
-                    this.textContent = `${y}年${m}月${d}日 星期${w}`;
-                    localStorage.setItem(STORAGE_DATE, this.textContent);
+            // ─── 2. 游戏模式切换逻辑 ───
+            function loadGameMode() {
+                const saved = localStorage.getItem(STORAGE_GAME);
+                if (saved && (saved === '3d' || saved === 'pl3')) {
+                    currentGame = saved;
                 }
-            });
+                applyGameMode(currentGame);
+            }
 
-            dateText.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    this.blur();
+            function applyGameMode(mode) {
+                const config = GAME_CONFIG[mode];
+                if (!config) return;
+
+                titleLogoImg.src = config.titleImg;
+                issueLabel.textContent = config.issueLabelText;
+                gameSwitchText.textContent = config.menuText;
+
+                const oldMode = mode === '3d' ? 'pl3' : '3d';
+                const oldConfig = GAME_CONFIG[oldMode];
+                if (editor.innerHTML.trim() === oldConfig.defaultContent.trim()) {
+                    editor.innerHTML = config.defaultContent;
                 }
-            });
 
-            issueText.addEventListener('blur', function() {
-                const val = this.textContent.trim();
-                if (val) {
-                    localStorage.setItem(STORAGE_ISSUE, val);
-                } else {
-                    const now = new Date();
-                    const y = now.getFullYear();
-                    const m = String(now.getMonth() + 1).padStart(2, '0');
-                    const d = String(now.getDate()).padStart(2, '0');
-                    this.textContent = `${y}-${m}${d}`;
-                    localStorage.setItem(STORAGE_ISSUE, this.textContent);
-                }
-            });
+                currentGame = mode;
+                localStorage.setItem(STORAGE_GAME, currentGame);
+            }
 
-            issueText.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    this.blur();
-                }
-            });
+            function switchGame() {
+                const newMode = currentGame === '3d' ? 'pl3' : '3d';
+                applyGameMode(newMode);
+                showToast(`已切换至 ${newMode === '3d' ? '3D' : '排列3'} 模式`);
+            }
 
-            // ─── 2. 编辑器内容 ───
+            // ─── 3. 编辑器内容 ───
             function loadContent() {
                 const saved = localStorage.getItem(STORAGE_CONTENT);
                 if (saved && saved.trim() !== '') {
                     editor.innerHTML = saved;
                 } else {
-                    editor.innerHTML = DEFAULT_CONTENT;
+                    editor.innerHTML = GAME_CONFIG[currentGame].defaultContent;
                 }
             }
             loadContent();
 
             let saveTimer = null;
-
             function saveContent() {
                 clearTimeout(saveTimer);
                 saveTimer = setTimeout(() => {
@@ -909,17 +881,20 @@
             }
             editor.addEventListener('input', saveContent);
 
-            // ─── 3. 自适应字号 (保留原有逻辑) ───
+            // ─── 4. 自适应字号 ───
             function autoFitText() {
                 void editor.scrollHeight;
                 const containerHeight = editor.clientHeight;
                 if (containerHeight < 20) return;
 
-                let fontSize = parseFloat(window.getComputedStyle(editor).fontSize) || DEFAULT_FONT_SIZE;
+                let fontSize = parseFloat(window.getComputedStyle(editor).fontSize) || 18;
                 let scrollHeight = editor.scrollHeight;
 
                 let loopCount = 0;
                 const MAX_LOOPS = 30;
+                const MIN_FONT_SIZE = 10;
+                const MAX_FONT_SIZE = 22;
+                const DEFAULT_FONT_SIZE = 18;
 
                 while (scrollHeight < containerHeight && fontSize < MAX_FONT_SIZE && loopCount < MAX_LOOPS) {
                     fontSize += 0.5;
@@ -940,24 +915,16 @@
                 }
 
                 const children = editor.querySelectorAll('*');
-                children.forEach(el => {
-                    if (el.style) {
-                        el.style.fontSize = '';
-                    }
-                });
+                children.forEach(el => { if (el.style) { el.style.fontSize = ''; } });
             }
 
             let fitTimer = null;
             let resizeObserver = null;
 
             function initResizeObserver() {
-                if (resizeObserver) {
-                    resizeObserver.disconnect();
-                }
+                if (resizeObserver) { resizeObserver.disconnect(); }
                 resizeObserver = new ResizeObserver(() => {
-                    requestAnimationFrame(() => {
-                        autoFitText();
-                    });
+                    requestAnimationFrame(() => { autoFitText(); });
                 });
                 resizeObserver.observe(editor);
             }
@@ -965,120 +932,59 @@
             function scheduleFit() {
                 clearTimeout(fitTimer);
                 fitTimer = requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        autoFitText();
-                    });
+                    requestAnimationFrame(() => { autoFitText(); });
                 });
             }
 
             editor.addEventListener('input', scheduleFit);
-            editor.addEventListener('paste', function() {
-                setTimeout(scheduleFit, 0);
-            });
-            editor.addEventListener('cut', function() {
-                setTimeout(scheduleFit, 0);
-            });
-            editor.addEventListener('keydown', function(e) {
+            editor.addEventListener('paste', () => { setTimeout(scheduleFit, 0); });
+            editor.addEventListener('cut', () => { setTimeout(scheduleFit, 0); });
+            editor.addEventListener('keydown', (e) => {
                 if ((e.key === 'Backspace' || e.key === 'Delete') && !e.isComposing) {
                     setTimeout(scheduleFit, 0);
                 }
             });
             window.addEventListener('resize', scheduleFit);
 
-            setTimeout(() => {
-                scheduleFit();
-                initResizeObserver();
-            }, 100);
+            setTimeout(() => { scheduleFit(); initResizeObserver(); }, 100);
+            window.addEventListener('beforeunload', () => { if (resizeObserver) { resizeObserver.disconnect(); } });
 
-            window.addEventListener('beforeunload', () => {
-                if (resizeObserver) {
-                    resizeObserver.disconnect();
-                }
-            });
-
-            // ─── 4. 底色 ───
+            // ─── 5. 底色 ───
             function loadBgColor() {
                 const saved = localStorage.getItem(STORAGE_BG);
                 if (saved) {
                     card.style.backgroundColor = saved;
                     colorPickerPopup.value = saved;
                 } else {
-                    card.style.backgroundColor = DEFAULT_BG;
-                    colorPickerPopup.value = DEFAULT_BG;
+                    card.style.backgroundColor = '#ffffff';
+                    colorPickerPopup.value = '#ffffff';
                 }
             }
             loadBgColor();
 
             function openColorPicker() {
-                colorPickerPopup.value = card.style.backgroundColor || DEFAULT_BG;
+                colorPickerPopup.value = card.style.backgroundColor || '#ffffff';
                 colorPickerOverlay.classList.add('active');
             }
-
-            function closeColorPicker() {
-                colorPickerOverlay.classList.remove('active');
-            }
-
+            function closeColorPicker() { colorPickerOverlay.classList.remove('active'); }
             colorPickerClose.addEventListener('click', closeColorPicker);
-
             colorPickerPopup.addEventListener('input', function() {
                 const color = this.value;
                 card.style.backgroundColor = color;
                 localStorage.setItem(STORAGE_BG, color);
             });
-
             colorPickerOverlay.addEventListener('click', function(e) {
-                if (e.target === colorPickerOverlay || e.target === colorPickerClose) {
-                    closeColorPicker();
-                }
+                if (e.target === colorPickerOverlay || e.target === colorPickerClose) { closeColorPicker(); }
             });
-
-            colorPickerPopup.addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
-
-            // ─── 5. LOGO ───
-            logoImg.addEventListener('error', function() {
-                this.style.display = 'none';
-                logoPlaceholder.style.display = 'flex';
-            });
-
-            logoImg.addEventListener('load', function() {
-                this.style.display = 'block';
-                logoPlaceholder.style.display = 'none';
-            });
-
-            logoArea.addEventListener('click', function(e) {
-                if (e.target.tagName === 'INPUT') return;
-                logoUpload.click();
-            });
-
-            logoUpload.addEventListener('change', function(e) {
-                const file = this.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = function(ev) {
-                    const dataUrl = ev.target.result;
-                    logoImg.src = dataUrl;
-                    logoImg.style.display = 'block';
-                    logoPlaceholder.style.display = 'none';
-                    localStorage.setItem(STORAGE_LOGO, dataUrl);
-                    showToast('✅ LOGO已上传');
-                };
-                reader.readAsDataURL(file);
-                this.value = '';
-            });
+            colorPickerPopup.addEventListener('click', (e) => e.stopPropagation());
 
             // ─── 6. 底图 ───
             function loadBgImage() {
                 const saved = localStorage.getItem(STORAGE_BGIMAGE);
-                if (saved) {
-                    editor.style.setProperty('--bg-image', `url(${saved})`);
-                } else {
-                    editor.style.setProperty('--bg-image', 'none');
-                }
+                if (saved) { editor.style.setProperty('--bg-image', `url(${saved})`); }
+                else { editor.style.setProperty('--bg-image', 'none'); }
             }
             loadBgImage();
-
             bgImageInput.addEventListener('change', function(e) {
                 const file = this.files[0];
                 if (!file) return;
@@ -1092,7 +998,6 @@
                 reader.readAsDataURL(file);
                 this.value = '';
             });
-
             function clearBgImage() {
                 editor.style.setProperty('--bg-image', 'none');
                 localStorage.removeItem(STORAGE_BGIMAGE);
@@ -1101,89 +1006,164 @@
 
             // ─── 7. 菜单控制 ───
             let isMenuOpen = false;
-
             function toggleMenu(e) {
                 e.stopPropagation();
                 isMenuOpen = !isMenuOpen;
-                if (isMenuOpen) {
-                    dropdownMenu.classList.add('open');
-                } else {
-                    dropdownMenu.classList.remove('open');
-                }
+                if (isMenuOpen) { dropdownMenu.classList.add('open'); }
+                else { dropdownMenu.classList.remove('open'); }
             }
-
             function closeMenu() {
                 isMenuOpen = false;
                 dropdownMenu.classList.remove('open');
             }
-
             menuToggle.addEventListener('click', toggleMenu);
-
             dropdownMenu.addEventListener('click', function(e) {
                 const item = e.target.closest('.menu-item');
                 if (!item) return;
                 const action = item.dataset.action;
 
                 switch (action) {
-                    case 'screenshot':
-                        handleScreenshot();
-                        break;
-                    case 'bgcolor':
-                        openColorPicker();
-                        break;
-                    case 'bgimage':
-                        bgImageInput.click();
-                        break;
-                    case 'print':
-                        window.print();
-                        break;
-                    case 'reset':
-                        handleReset();
-                        break;
+                    case 'screenshot': handleScreenshot(); break;
+                    case 'bgcolor': openColorPicker(); break;
+                    case 'bgimage': bgImageInput.click(); break;
+                    case 'print': window.print(); break;
+                    case 'switchGame': switchGame(); break;
+                    case 'history': openHistoryModal(); break;
+                    case 'reset': handleReset(); break;
                 }
                 closeMenu();
             });
-
             dropdownMenu.addEventListener('dblclick', function(e) {
                 const item = e.target.closest('.menu-item');
-                if (item && item.dataset.action === 'bgimage') {
-                    clearBgImage();
-                    closeMenu();
-                }
+                if (item && item.dataset.action === 'bgimage') { clearBgImage(); closeMenu(); }
             });
-
             document.addEventListener('click', function(e) {
                 if (menuToggle.contains(e.target)) return;
                 if (dropdownMenu.contains(e.target)) return;
-                if (isMenuOpen) {
-                    closeMenu();
+                if (isMenuOpen) { closeMenu(); }
+            });
+
+            // ─── 8. 保存到历史记录 ───
+            function openSaveTitleModal() {
+                saveTitleOverlay.classList.add('active');
+                historyTitleInput.value = '';
+                setTimeout(() => historyTitleInput.focus(), 100);
+            }
+            function closeSaveTitleModal() {
+                saveTitleOverlay.classList.remove('active');
+            }
+
+            saveHistoryBtn.addEventListener('click', openSaveTitleModal);
+            saveTitleCancel.addEventListener('click', closeSaveTitleModal);
+            saveTitleConfirm.addEventListener('click', function() {
+                const title = historyTitleInput.value.trim() || `无标题记录`;
+                saveToHistory(title);
+                closeSaveTitleModal();
+            });
+            historyTitleInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    saveTitleConfirm.click();
                 }
             });
 
-            // ─── 8. 截图 ───
+            function saveToHistory(title) {
+                const history = JSON.parse(localStorage.getItem(STORAGE_HISTORY) || '[]');
+                const record = {
+                    id: Date.now(),
+                    timestamp: Date.now(),
+                    mode: currentGame,
+                    modeName: GAME_CONFIG[currentGame].labelName,
+                    content: editor.innerHTML,
+                    title: title
+                };
+                history.unshift(record);
+                if (history.length > 100) { history.pop(); }
+                localStorage.setItem(STORAGE_HISTORY, JSON.stringify(history));
+                showToast('✅ 已成功保存历史记录');
+            }
+
+            // ─── 9. 历史记录 ───
+            function openHistoryModal() {
+                renderHistory();
+                historyOverlay.classList.add('active');
+            }
+            function closeHistoryModal() {
+                historyOverlay.classList.remove('active');
+            }
+
+            closeHistoryBtn.addEventListener('click', closeHistoryModal);
+            historyOverlay.addEventListener('click', function(e) {
+                if (e.target === historyOverlay) { closeHistoryModal(); }
+            });
+
+            function renderHistory() {
+                const history = JSON.parse(localStorage.getItem(STORAGE_HISTORY) || '[]');
+                if (history.length === 0) {
+                    historyList.innerHTML = `<div style="text-align:center;padding:40px 0;color:#8a7a5a;">暂无历史记录</div>`;
+                    return;
+                }
+                let html = '';
+                history.forEach(item => {
+                    const date = new Date(item.timestamp);
+                    const dateStr = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+                    html += `
+                        <div class="history-item" data-id="${item.id}">
+                            <div class="item-header">
+                                <span class="item-title">${item.title}</span>
+                                <span class="item-meta">#${item.modeName}</span>
+                            </div>
+                            <div class="item-meta">${dateStr}</div>
+                            <div class="item-actions">
+                                <button class="load-btn" onclick="window.loadHistoryItem(${item.id})">📂 加载</button>
+                                <button class="del-btn" onclick="window.deleteHistoryItem(${item.id})">🗑️ 删除</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                historyList.innerHTML = html;
+            }
+
+            window.loadHistoryItem = function(id) {
+                const history = JSON.parse(localStorage.getItem(STORAGE_HISTORY) || '[]');
+                const record = history.find(item => item.id === id);
+                if (record) {
+                    if (record.mode !== currentGame) {
+                        applyGameMode(record.mode);
+                    }
+                    editor.innerHTML = record.content;
+                    saveContent();
+                    scheduleFit();
+                    showToast('✅ 已加载历史记录');
+                    closeHistoryModal();
+                } else {
+                    showToast('⚠️ 找不到该记录');
+                }
+            };
+
+            window.deleteHistoryItem = function(id) {
+                if (!confirm('确定要删除这条历史记录吗？')) return;
+                let history = JSON.parse(localStorage.getItem(STORAGE_HISTORY) || '[]');
+                history = history.filter(item => item.id !== id);
+                localStorage.setItem(STORAGE_HISTORY, JSON.stringify(history));
+                renderHistory();
+                showToast('🗑️ 已删除记录');
+            };
+
+            // ─── 10. 截图 ───
             async function handleScreenshot() {
                 try {
                     closeMenu();
-                    if (colorPickerOverlay.classList.contains('active')) {
-                        closeColorPicker();
-                    }
+                    if (colorPickerOverlay.classList.contains('active')) { closeColorPicker(); }
                     await new Promise(r => setTimeout(r, 100));
-
                     if (typeof html2canvas === 'undefined') {
                         showToast('⏳ 截图库加载中…');
                         await loadHtml2Canvas();
                     }
-
                     showToast('📸 正在截取…');
 
                     const canvas = await html2canvas(card, {
-                        scale: 2.5,
-                        useCORS: true,
-                        allowTaint: true,
-                        backgroundColor: null,
-                        logging: false,
-                        width: card.scrollWidth,
-                        height: card.scrollHeight,
+                        scale: 2.5, useCORS: true, allowTaint: true, backgroundColor: null, logging: false,
+                        width: card.scrollWidth, height: card.scrollHeight,
                         onclone: function(clonedDoc, clonedElement) {
                             const title = clonedElement.querySelector('.main-title');
                             if (title) {
@@ -1196,7 +1176,6 @@
                                 const after = title.querySelector('::after');
                                 if (after) after.style.display = 'none';
                             }
-
                             const lines = clonedElement.querySelectorAll('.footer .line-1, .footer .line-2');
                             lines.forEach(el => {
                                 el.style.background = 'none';
@@ -1211,7 +1190,6 @@
                                 line2.style.color = '#c41a1a';
                                 line2.style.webkitTextFillColor = '#c41a1a';
                             }
-
                             const dateEl = clonedElement.querySelector('.date-text');
                             if (dateEl) {
                                 dateEl.style.background = 'none';
@@ -1231,24 +1209,18 @@
 
                     const link = document.createElement('a');
                     const timestamp = new Date().toISOString().slice(0, 19).replace(/[:-]/g, '');
-                    link.download = `今日3D推荐_${timestamp}.png`;
+                    link.download = `今日推荐_${timestamp}.png`;
                     link.href = canvas.toDataURL('image/png');
 
                     if (navigator.share && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
                         try {
                             const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-                            const file = new File([blob], `今日3D推荐_${timestamp}.png`, { type: 'image/png' });
-                            await navigator.share({
-                                files: [file],
-                                title: '今日3D推荐',
-                            });
+                            const file = new File([blob], `今日推荐_${timestamp}.png`, { type: 'image/png' });
+                            await navigator.share({ files: [file], title: '今日推荐' });
                             showToast('✅ 截图已分享');
                             return;
                         } catch (shareErr) {
-                            if (shareErr.name === 'AbortError') {
-                                showToast('⚠️ 分享取消');
-                                return;
-                            }
+                            if (shareErr.name === 'AbortError') { showToast('⚠️ 分享取消'); return; }
                             link.click();
                             showToast('✅ 截图已保存 (下载)');
                         }
@@ -1256,19 +1228,15 @@
                         link.click();
                         showToast('✅ 截图已保存');
                     }
-
                 } catch (err) {
                     console.error('截图失败:', err);
                     showToast('❌ 截图失败，请重试');
                 }
             }
 
-            function loadHtml2Canvas() {
+            async function loadHtml2Canvas() {
                 return new Promise((resolve, reject) => {
-                    if (typeof html2canvas !== 'undefined') {
-                        resolve();
-                        return;
-                    }
+                    if (typeof html2canvas !== 'undefined') { resolve(); return; }
                     const script = document.createElement('script');
                     script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
                     script.onload = () => resolve();
@@ -1277,21 +1245,17 @@
                 });
             }
 
-            // ─── 9. 默认恢复 ───
+            // ─── 11. 默认恢复 ───
             function handleReset() {
-                card.style.backgroundColor = DEFAULT_BG;
-                colorPickerPopup.value = DEFAULT_BG;
-                localStorage.setItem(STORAGE_BG, DEFAULT_BG);
-
+                card.style.backgroundColor = '#ffffff';
+                colorPickerPopup.value = '#ffffff';
+                localStorage.setItem(STORAGE_BG, '#ffffff');
                 clearBgImage();
 
-                logoImg.src = 'launchericon-512x512.png';
-                logoImg.style.display = 'block';
-                logoPlaceholder.style.display = 'none';
-                localStorage.removeItem(STORAGE_LOGO);
-
-                editor.innerHTML = DEFAULT_CONTENT;
-                localStorage.setItem(STORAGE_CONTENT, DEFAULT_CONTENT);
+                currentGame = '3d';
+                applyGameMode('3d');
+                editor.innerHTML = GAME_CONFIG['3d'].defaultContent;
+                localStorage.setItem(STORAGE_CONTENT, editor.innerHTML);
 
                 const now = new Date();
                 const y = now.getFullYear();
@@ -1307,24 +1271,28 @@
                 issueText.textContent = defaultIssue;
                 localStorage.setItem(STORAGE_ISSUE, defaultIssue);
 
-                editor.style.fontSize = DEFAULT_FONT_SIZE + 'px';
-
+                editor.style.fontSize = '18px';
                 showToast('🔄 已恢复默认状态');
             }
 
-            // ─── 10. 窗口关闭保存 ───
+            // ─── 12. 窗口关闭保存 ───
             window.addEventListener('beforeunload', function() {
                 localStorage.setItem(STORAGE_CONTENT, editor.innerHTML);
                 localStorage.setItem(STORAGE_DATE, dateText.textContent);
                 localStorage.setItem(STORAGE_ISSUE, issueText.textContent);
+                localStorage.setItem(STORAGE_GAME, currentGame);
             });
 
-            // ─── 11. 预加载 html2canvas ───
+            // ─── 13. 预加载 html2canvas ───
             if (typeof html2canvas === 'undefined') {
                 loadHtml2Canvas().catch(() => {});
             }
 
-            console.log('✅ 鸿奇添·3D推荐记事本 (标题图标文件名已更新为 3d-512-491.png)');
+            // ─── 14. 初始化加载 ───
+            loadGameMode();
+            loadContent();
+
+            console.log('✅ 鸿奇添·推荐记事本 (版式已重构，日期紧贴标题下方)');
         })();
     </script>
 
